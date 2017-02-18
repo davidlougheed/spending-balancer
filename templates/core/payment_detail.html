@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    {% if payment %}
+        <h2>{{ payment.date_made }} by {{ payment.payer.username }}</h2>
+        <table><tr><th>Amount</th><td>{{ payment.amount }}</td><tr><th>Category</th><td>{{ payment.category.name }}</td></tr></table>
+    {% else %}
+        <p>No payment was found.</p>
+    {% endif %}
+{% endblock %}

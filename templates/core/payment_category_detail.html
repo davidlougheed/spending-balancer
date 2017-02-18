@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    {% if category %}
+        <h2>{{ category.name }}</h2>
+    {% else %}
+        <p>No payment category was found.</p>
+    {% endif %}
+{% endblock %}

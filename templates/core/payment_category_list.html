@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Payment Categories</h2>
+    <a href="{% url 'payment-category-add' %}">Add Category</a>
+    {% if payment_categories %}
+        <ul class="categories">
+        {% for category in payment_categories %}
+                <li>
+                    <a href="{% url 'payment-category-detail' category.id %}">
+                        <div class="name">{{ category.name }}</div>
+                    </a>
+                </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No payment categories are present.</p>
+    {% endif %}
+{% endblock %}

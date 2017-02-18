@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Contribution Statistics</h2>
+    <div class="table-container">
+        <table>
+            <tbody>
+                <tr><th>Mean</th><td>${{ contribution_mean }}</td></tr>
+                <tr><th>Contributors</th><td>{{ deviations|length }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Payment Statistics</h2>
+    <div class="table-container">
+        <table>
+            <tbody>
+                <tr><th>Mean</th><td>${{ payment_mean }}</td></tr>
+                <tr><th>Total</th><td>${{ total }}</td></tr>
+                <tr><th>Number</th><td>{{ number }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Deviations</h2>
+    <div class="table-container">
+        <table>
+            <tbody>
+                {% for deviation in deviations %}
+                    <tr>
+                        <th>{{ deviation.0 }}</th>
+                        <td><span class="{{ deviation.1.signal }}">${{ deviation.1.amount }}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

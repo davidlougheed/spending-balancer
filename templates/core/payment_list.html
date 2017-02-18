@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Payments</h2>
+    {% if payments %}
+        <ul class="payments">
+        {% for payment in payments %}
+                <li>
+                    <a href="{% url 'payment-detail' payment.id %}">
+                        <div class="date">{{ payment.date_made }}</div> ${{ payment.amount }} by {{ payment.payer }}.
+                    </a>
+                </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No payments are present.</p>
+    {% endif %}
+{% endblock %}
