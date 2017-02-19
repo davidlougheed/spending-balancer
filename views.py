@@ -8,6 +8,8 @@ from decimal import *
 from .models import Payment, PaymentCategory
 from .forms import PaymentForm, PaymentCategoryForm
 
+import json
+
 @login_required
 def index(request):
     users = User.objects.order_by('username')
@@ -16,12 +18,26 @@ def index(request):
     total_paid = Decimal('0.00')
     users_paid = {}
 
+    payments_by_category = {}
+
     for payment in payments:
         total_paid += payment.amount
         if payment.payer.id in users_paid:
             users_paid[payment.payer.id] += payment.amount
         else:
             users_paid[payment.payer.id] = payment.amount
+
+        print(payments_by_category)
+
+        if payment.category.name in payments_by_category:
+            payments_by_category[payment.category.name]['y'] += float(payment.amount)
+        else:
+            payments_by_category[payment.category.name] = {
+                'name': payment.category.name,
+                'y': 0
+            }
+
+    print(payments_by_category)
 
     mean_paid = Decimal(0)
     mean_payment = Decimal(0)
@@ -35,7 +51,6 @@ def index(request):
     deviations = []
 
     for user in users:
-        print(users_paid)
         if user.id in users_paid:
             deviations.append((user.username, {
                 'amount': str(users_paid[user.id] - mean_paid),
@@ -48,6 +63,7 @@ def index(request):
         'deviations': deviations,
         'contribution_mean': str(mean_paid.quantize(Decimal('0.01'))),
         'payment_mean': str(mean_payment.quantize(Decimal('0.01'))),
+        'payments_by_category': json.dumps(list(payments_by_category.values())),
         'total': str(total_paid.quantize(Decimal('0.01'))),
         'number': payments.count(),
         'signed_in': request.user.is_authenticated
