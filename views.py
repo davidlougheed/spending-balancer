@@ -34,7 +34,7 @@ def index(request):
         else:
             payments_by_category[payment.category.name] = {
                 'name': payment.category.name,
-                'y': 0
+                'y': float(payment.amount)
             }
 
     print(payments_by_category)
