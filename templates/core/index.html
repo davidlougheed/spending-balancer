@@ -14,7 +14,7 @@
                     text: 'Spending by Category'
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>{point.y:.2f}</b>'
+                    pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
                 },
                 plotOptions: {
                     pie: {
@@ -22,7 +22,7 @@
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.y:.2f} %',
+                            format: '<b>{point.name}</b>: ${point.y:.2f}',
                             style: {
                                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                             }
