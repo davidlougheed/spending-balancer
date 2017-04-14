@@ -11,6 +11,7 @@ class PaymentCategory(models.Model):
     def __str__(self):
         return self.name
 
+
 class Payment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -24,4 +25,4 @@ class Payment(models.Model):
     category = models.ForeignKey(PaymentCategory, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return '$' + str(self.amount) + ' made ' + str(date_made) + ' by ' + str(payer) + '.'
+        return '$' + str(self.amount) + ' made ' + str(self.date_made) + ' by ' + str(self.payer) + '.'
