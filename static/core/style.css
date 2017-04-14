@@ -100,9 +100,10 @@ ul.payments li a, ul.categories li a {
 }
 ul.payments li div.date, ul.categories li div.name {
     display: inline-block;
+    min-width: 9rem;
+
     font-weight: 900;
     color: #f44336;
-    width: 9rem;
     letter-spacing: -0.5px;
 }
 
@@ -148,6 +149,6 @@ button, input[type="submit"] {
 @media screen and (max-width: 900px) {
     header { height: auto; }
     header h1 { float: none; }
-    header nav { float: none; margin-right: none; }
+    header nav { float: none; margin-right: 0; }
     header nav ul { padding: 0 20px 0 20px; }
 }
