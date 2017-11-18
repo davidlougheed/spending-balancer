@@ -2,10 +2,12 @@ from django import forms
 from django.forms import ModelForm, DateInput
 from .models import Payment, PaymentCategory
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 class SignInForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = User
         fields = ['username']
@@ -22,10 +24,12 @@ class PaymentForm(ModelForm):
         model = Payment
         fields = ['date_made', 'amount', 'receipt', 'category', 'payer']
         widgets = {
-            'date_made': DateInput(attrs={'placeholder': 'YYYY-MM-DD'}),
+            'date_made': DateInput(attrs={
+                'placeholder': 'YYYY-MM-DD',
+                'value': datetime.now().strftime('%Y-%m-%d')
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super(PaymentForm, self).__init__(*args, **kwargs)
         self.fields['receipt'].required = False
-
