@@ -107,6 +107,10 @@ ul.payments li div.date, ul.categories li div.name {
     letter-spacing: -0.5px;
 }
 
+span.negative {
+    color: #f44336;
+}
+
 .row {
     font-size: 0;
     padding: 20px 0;

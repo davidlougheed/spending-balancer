@@ -52,9 +52,10 @@ def index(request):
 
     for user in users:
         if user.id in users_paid:
+            deviation = users_paid[user.id] - mean_paid
             deviations.append((user.username, {
-                'amount': str(users_paid[user.id] - mean_paid),
-                'signal': ''
+                'amount': str(deviation),
+                'signal': 'negative' if deviation < 0 else 'positive'
             }))
         else:
             deviations.append((user.username, '0'))
