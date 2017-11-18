@@ -35,33 +35,46 @@
                     data: {{ payments_by_category|safe }}
                 }]
             });
+
+            {% for user, payments in payments_by_category_by_user.items %}
+                Highcharts.chart('payment-by-category-user-{{ user }}', {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Spending by Category for {{ user }}'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: ${point.y:.2f}',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: [{
+                        name: 'Categories',
+                        colorByPoint: true,
+                        data: {{ payments|safe }}
+                    }]
+                });
+            {% endfor %}
         });
     </script>
 {% endblock %}
 
 {% block content %}
-    <h2>Contribution Statistics</h2>
-    <div class="table-container">
-        <table>
-            <tbody>
-                <tr><th>Mean</th><td>${{ contribution_mean }}</td></tr>
-                <tr><th>Contributors</th><td>{{ deviations|length }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <h2>Payment Statistics</h2>
-    <div class="table-container">
-        <table>
-            <tbody>
-                <tr><th>Mean</th><td>${{ payment_mean }}</td></tr>
-                <tr><th>Total</th><td>${{ total }}</td></tr>
-                <tr><th>Number</th><td>{{ number }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-    <div id="payment-by-category"></div>
-
     <h2>Deviations</h2>
     <div class="table-container">
         <table>
@@ -74,5 +87,38 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <div class="row">
+        <div class="col col50">
+            <h2>Contribution Statistics</h2>
+            <div class="table-container">
+                <table>
+                    <tbody>
+                        <tr><th>Mean</th><td>${{ contribution_mean }}</td></tr>
+                        <tr><th>Contributors</th><td>{{ deviations|length }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col col50">
+            <h2>Payment Statistics</h2>
+            <div class="table-container">
+                <table>
+                    <tbody>
+                        <tr><th>Mean</th><td>${{ payment_mean }}</td></tr>
+                        <tr><th>Total</th><td>${{ total }}</td></tr>
+                        <tr><th>Number</th><td>{{ number }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h2>Payment Categories by User</h2>
+    <div class="row">
+    {% for user, payments in payments_by_category_by_user.items %}
+        <div class="col col50"><div id="payment-by-category-user-{{ user }}"></div></div>
+    {% endfor %}
     </div>
 {% endblock %}

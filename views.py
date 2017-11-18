@@ -14,28 +14,36 @@ import json
 def index(request):
     users = User.objects.order_by('username')
     payments = Payment.objects.all()
+    payment_categories = PaymentCategory.objects.all()
 
     total_paid = Decimal('0.00')
-    users_paid = {}
+    users_paid = {user.id: Decimal('0.00') for user in users}
 
-    payments_by_category = {}
+    payments_by_category = {
+        category.name: {
+            'name': category.name,
+            'y': 0.0
+        } for category in payment_categories
+    }
+    payments_by_category_by_user = {
+        user.username: {
+            category.name: {
+                'name': category.name,
+                'y': 0.0
+            } for category in payment_categories
+        } for user in users
+    }
 
     for payment in payments:
         total_paid += payment.amount
-        if payment.payer.id in users_paid:
-            users_paid[payment.payer.id] += payment.amount
-        else:
-            users_paid[payment.payer.id] = payment.amount
+        users_paid[payment.payer.id] += payment.amount
 
-        print(payments_by_category)
+        payments_by_category_by_user[payment.payer.username][payment.category.name]['y'] += float(payment.amount)
+        payments_by_category[payment.category.name]['y'] += float(payment.amount)
 
-        if payment.category.name in payments_by_category:
-            payments_by_category[payment.category.name]['y'] += float(payment.amount)
-        else:
-            payments_by_category[payment.category.name] = {
-                'name': payment.category.name,
-                'y': float(payment.amount)
-            }
+    for k in payments_by_category_by_user:
+        payments_by_category_by_user[k] = json.dumps(list(payments_by_category_by_user[k].values()))
+
 
     print(payments_by_category)
 
@@ -51,20 +59,18 @@ def index(request):
     deviations = []
 
     for user in users:
-        if user.id in users_paid:
-            deviation = users_paid[user.id] - mean_paid
-            deviations.append((user.username, {
-                'amount': str(deviation),
-                'signal': 'negative' if deviation < 0 else 'positive'
-            }))
-        else:
-            deviations.append((user.username, '0'))
+        deviation = users_paid[user.id] - mean_paid
+        deviations.append((user.username, {
+            'amount': str(deviation),
+            'signal': 'negative' if deviation < 0 else 'positive'
+        }))
 
     return render(request, 'core/index.html', {
         'deviations': deviations,
         'contribution_mean': str(mean_paid.quantize(Decimal('0.01'))),
         'payment_mean': str(mean_payment.quantize(Decimal('0.01'))),
         'payments_by_category': json.dumps(list(payments_by_category.values())),
+        'payments_by_category_by_user': payments_by_category_by_user,
         'total': str(total_paid.quantize(Decimal('0.01'))),
         'number': payments.count(),
         'signed_in': request.user.is_authenticated
