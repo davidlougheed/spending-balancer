@@ -70,6 +70,8 @@ def index(request):
     })
 
 
+# Payment Views
+
 @login_required
 def payment_list(request):
     payments = Payment.objects.order_by('-date_made')
@@ -78,6 +80,7 @@ def payment_list(request):
         'signed_in': request.user.is_authenticated
     })
 
+
 @login_required
 def payment_detail(request, payment_id):
     payment = get_object_or_404(Payment, pk=payment_id)
@@ -85,6 +88,7 @@ def payment_detail(request, payment_id):
         'payment': payment,
         'signed_in': request.user.is_authenticated
     })
+
 
 @login_required
 def payment_add(request):
@@ -98,12 +102,15 @@ def payment_add(request):
     return render(request, 'core/payment_add.html', {'form': pf, 'signed_in': request.user.is_authenticated})
 
 
+# Payment Category Views
+
 def payment_category_list(request):
     payment_categories = PaymentCategory.objects.order_by('name')
     return render(request, 'core/payment_category_list.html', {
         'payment_categories': payment_categories,
         'signed_in': request.user.is_authenticated
     })
+
 
 def payment_category_detail(request, category_id):
     category = get_object_or_404(PaymentCategory, pk=category_id)
@@ -123,6 +130,8 @@ def payment_category_add(request):
     return render(request, 'core/payment_category_add.html', {'form': pcf, 'signed_in': request.user.is_authenticated})
 
 
+# Authentication Views
+
 def sign_in(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -132,6 +141,7 @@ def sign_in(request):
             login(request, user)
             return redirect('index')
     return render(request, 'core/sign_in.html', {'signed_in': request.user.is_authenticated})
+
 
 def sign_out(request):
     logout(request)
