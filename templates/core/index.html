@@ -3,6 +3,11 @@
 {% block scripts %}
     <script type="text/javascript">
         $(function () {
+            Highcharts.theme = {
+                colors: ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#1abc9c', '#3498db', '#9b59b6', '#bdc3c7']
+            };
+            Highcharts.setOptions(Highcharts.theme);
+
             Highcharts.chart('payment-by-category', {
                 chart: {
                     plotBackgroundColor: null,
