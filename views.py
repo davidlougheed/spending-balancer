@@ -9,12 +9,15 @@ from .models import Payment, PaymentCategory
 from .forms import PaymentForm, PaymentCategoryForm
 
 import json
+import numpy as np
+
 
 @login_required
 def index(request):
     users = User.objects.order_by('username')
     payments = Payment.objects.all()
     payment_categories = PaymentCategory.objects.all()
+    payment_amounts = [float(p.amount) for p in payments]
 
     total_paid = Decimal('0.00')
     users_paid = {user.id: Decimal('0.00') for user in users}
@@ -44,8 +47,10 @@ def index(request):
     for k in payments_by_category_by_user:
         payments_by_category_by_user[k] = json.dumps(list(payments_by_category_by_user[k].values()))
 
+    payment_bins = np.linspace(0, 200, 21, True).astype(np.float64)
+    payment_counts = np.histogram(payment_amounts, bins=payment_bins)[0].tolist()
 
-    print(payments_by_category)
+    payment_hist = [[payment_bins[i], payment_counts[i]] for i in range(0, len(payment_counts))]
 
     mean_paid = Decimal(0)
     mean_payment = Decimal(0)
@@ -71,6 +76,7 @@ def index(request):
         'payment_mean': str(mean_payment.quantize(Decimal('0.01'))),
         'payments_by_category': json.dumps(list(payments_by_category.values())),
         'payments_by_category_by_user': payments_by_category_by_user,
+        'payment_hist': json.dumps(payment_hist),
         'total': str(total_paid.quantize(Decimal('0.01'))),
         'number': payments.count(),
         'signed_in': request.user.is_authenticated

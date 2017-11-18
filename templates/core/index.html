@@ -41,6 +41,25 @@
                 }]
             });
 
+            Highcharts.chart('payment-amount-hist', {
+                title: {
+                    text: 'Payment Amount Histogram'
+                },
+                xAxis: {
+                    title: { text: 'Number' }
+                },
+
+                yAxis: {
+                    title: { text: 'Amount ($)' }
+                },
+
+                series: [{
+                    name: 'Payment Count',
+                    type: 'histogram',
+                    data: {{ payment_hist|safe }}
+                }]
+            });
+
             {% for user, payments in payments_by_category_by_user.items %}
                 Highcharts.chart('payment-by-category-user-{{ user }}', {
                     chart: {
@@ -92,6 +111,11 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <div class="row">
+        <div class="col col50"><div id="payment-by-category"></div></div>
+        <div class="col col50"><div id="payment-amount-hist"></div></div>
     </div>
 
     <div class="row">
