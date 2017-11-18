@@ -126,6 +126,8 @@ def payment_category_detail(request, category_id):
         'signed_in': request.user.is_authenticated
     })
 
+
+@login_required
 def payment_category_add(request):
     if request.method == 'POST':
         pcf = PaymentCategoryForm(request.POST)
