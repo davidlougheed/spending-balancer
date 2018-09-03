@@ -10,6 +10,7 @@ from .forms import PaymentForm, PaymentCategoryForm
 
 import json
 import numpy as np
+from datetime import datetime
 
 
 @login_required
@@ -108,10 +109,13 @@ def payment_add(request):
     if request.method == 'POST':
         pf = PaymentForm(request.POST)
         if pf.is_valid():
-            new_payment = pf.save()
+            pf.save()
             return redirect('payment-list')
     else:
-        pf = PaymentForm()
+        pf = PaymentForm(initial={
+            'date_made': datetime.now().strftime('%Y-%m-%d'),
+            'payer': request.user
+        })
     return render(request, 'core/payment_add.html', {'form': pf, 'signed_in': request.user.is_authenticated})
 
 
