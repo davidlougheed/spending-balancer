@@ -103,22 +103,44 @@ ul.payments, ul.categories {
     padding: 0;
 }
 
-ul.payments li, ul.categories li {
-    height: 30px;
+ul.payments li,
+ul.categories li {
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+    border-bottom: 1px solid #F3F3F3;
     font-size: 1.1rem;
     font-family: "Open Sans", sans-serif;
 }
-ul.payments li a, ul.categories li a {
+ul.payments li a,
+ul.categories li a {
     text-decoration: none;
     color: #2f2f2f;
 }
-ul.payments li div.date, ul.categories li div.name {
+ul.payments li div.date,
+ul.categories li div.name {
     display: inline-block;
-    min-width: 9rem;
+    min-width: 9.25rem;
 
     font-weight: 900;
     color: #f44336;
     letter-spacing: -0.5px;
+
+    white-space: nowrap;
+}
+ul.payments li:last-child,
+ul.categories li:last-child {
+    border-bottom: none;
+}
+
+ul.payments li div.controls,
+ul.categories li div.controls {
+    float: right;
+}
+
+ul.payments li div.controls a,
+ul.categories li div.controls a {
+    font-weight: 900;
+    color: #f44336;
 }
 
 span.negative {
