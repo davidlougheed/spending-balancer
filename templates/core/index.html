@@ -25,7 +25,7 @@
                 },
 
                 tooltip: {
-                    pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
+                    pointFormat: '<span style="color:{point.color}">●</span> {series.name}: <b>${point.y:.2f}</b>'
                 },
 
                 plotOptions: {
@@ -48,7 +48,7 @@
                     text: 'Spending by Category'
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
+                    pointFormat: '<span style="color:{point.color}">●</span> {series.name}: <b>${point.y:.2f}</b>'
                 },
                 plotOptions: {
                     pie: {
@@ -101,7 +101,7 @@
                         text: 'Spending by Category for {{ user }}'
                     },
                     tooltip: {
-                        pointFormat: '{series.name}: <b>${point.y:.2f}</b>'
+                        pointFormat: '<span style="color:{point.color}">●</span> {series.name}: <b>${point.y:.2f}</b>'
                     },
                     plotOptions: {
                         pie: {
