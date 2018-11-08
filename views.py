@@ -58,9 +58,9 @@ def index(request):
         payments_by_category[payment.category.name]['y'] += float(payment.amount)
 
     if len(payment_months) > 12:
-        payment_months = payment_months[-12:]
+        payment_months = payment_months[-13:]
         for cn in sorted_category_names:
-            spending_history[cn]['data'] = spending_history[cn]['data'][-12:]
+            spending_history[cn]['data'] = spending_history[cn]['data'][-13:]
 
     for k in payments_by_category_by_user:
         payments_by_category_by_user[k] = json.dumps(list(payments_by_category_by_user[k].values()))
