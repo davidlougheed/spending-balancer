@@ -4,6 +4,27 @@ from django.contrib.auth.models import User
 from datetime import date
 
 
+class Pool(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    name = models.CharField(max_length=100)
+
+    members = models.ManyToManyField(User, through='Membership')
+
+    def __str__(self):
+        return self.name
+
+
+class Membership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE)
+    owner = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} -> {} (Owner: {})'.format(self.user, self.pool, self.owner)
+
+
 class PaymentCategory(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
