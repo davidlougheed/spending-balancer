@@ -107,6 +107,10 @@
                     <tr>
                         <th>{{ deviation.0 }}</th>
                         <td><span class="{{ deviation.1.signal }}">${{ deviation.1.amount }}</span></td>
+                        <td>
+                            {% if deviation.1.top %}<i class="material-icons">directions_bike</i>{% endif %}
+                            {% if deviation.1.bottom %}<i class="material-icons">directions_run</i>{% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

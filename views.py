@@ -63,12 +63,18 @@ def index(request):
         mean_paid = total_paid / users.count()
 
     deviations = []
+    max_paid = max(users_paid.values())
+    min_paid = min(users_paid.values())
+    top_paid = [u for u in users_paid if users_paid[u] == max_paid]
+    bottom_paid = [u for u in users_paid if users_paid[u] == min_paid]
 
     for user in users:
         deviation = users_paid[user.id] - mean_paid
         deviations.append((user.username, {
             'amount': str(deviation),
-            'signal': 'negative' if deviation < 0 else 'positive'
+            'signal': 'negative' if deviation < 0 else 'positive',
+            'top': (len(top_paid) == 1 and top_paid[0] == user.id),
+            'bottom': (len(bottom_paid) == 1 and bottom_paid[0] == user.id)
         }))
 
     return render(request, 'core/index.html', {

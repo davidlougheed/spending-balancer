@@ -83,6 +83,12 @@ table tr th {
     text-align: right;
 }
 
+table tr td i.material-icons {
+    font-size: 1rem;
+    margin-top: 1px;
+    vertical-align: text-top;
+}
+
 ul.payments, ul.categories {
     list-style: none;
     margin: 0;
