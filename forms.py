@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, DateInput
-from .models import Payment, PaymentCategory
+from .models import *
 from django.contrib.auth.models import User
 
 
