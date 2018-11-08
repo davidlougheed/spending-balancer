@@ -1,7 +1,12 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h2>Members <a href="{% url 'member-add' pool.id %}">Add Member</a></h2>
+    <h2>
+        Members
+        {% if user.id in pool.owner_ids %}
+            <a href="{% url 'member-add' pool.id %}">Add Member</a>
+        {% endif %}
+    </h2>
     <ul class="members fancy-list">
         {% for member in members %}
             {# TODO: owner info #}

@@ -12,6 +12,10 @@ class Pool(models.Model):
 
     members = models.ManyToManyField(User, through='Membership')
 
+    @property
+    def owner_ids(self):
+        return [u[0] for u in Membership.objects.filter(pool=self, owner=True).values_list('user_id')]
+
     def __str__(self):
         return self.name
 

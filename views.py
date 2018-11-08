@@ -288,7 +288,7 @@ def member_add(request, pool_id):
 
     pool = get_object_or_404(Pool, pk=pool_id)
 
-    if request.user not in pool.members.all():
+    if request.user not in pool.members.all() or request.user not in pool.members.filter(membership__owner=True):
         raise PermissionDenied
 
     # TODO: More Error Handling
