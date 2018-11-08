@@ -9,7 +9,6 @@ class Pool(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100)
 
     members = models.ManyToManyField(User, through='Membership')
 
@@ -32,6 +31,8 @@ class PaymentCategory(models.Model):
 
     name = models.CharField(max_length=100)
 
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, default=1)
+
     def __str__(self):
         return self.name
 
@@ -46,7 +47,12 @@ class Payment(models.Model):
     receipt = models.ImageField(blank=True)
 
     payer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    category = models.ForeignKey(PaymentCategory, on_delete=models.SET_NULL, null=True)
+    pool = models.ForeignKey(Pool, on_delete=models.CASCADE, default=1)
+
+    def category_limitations(self):
+        return {'pool_id': self.pool.id}
+
+    category = models.ForeignKey(PaymentCategory, on_delete=models.PROTECT, null=True)
 
     @property
     def recent(self):

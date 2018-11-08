@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Your Pools</h2>
+    {% if pools %}
+        <ul class="pools fancy-list">
+        {% for pool in pools %}
+                <li>
+                    <a href="{% url 'pool-index' pool.id %}">
+                        <div class="name">{{ pool.name }}</div>
+                    </a>
+                    <div class="controls">
+{#                        {% if payment.payer.username == user.get_username and payment.recent %}#}
+{#                            <a href="{% url 'payment-edit' payment.id %}">Edit</a>#}
+{#                        {% endif %}#}
+                    </div>
+                </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You are not in any pools! <a href="{% url 'pool-create' %}" id="pool-create">Create one now.</a></p>
+    {% endif %}
+{% endblock %}

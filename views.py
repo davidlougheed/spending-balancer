@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import IntegrityError
 
 from decimal import *
 
@@ -31,9 +32,26 @@ def get_months(earliest_time):
 
 @login_required
 def index(request):
-    users = User.objects.order_by('username')
-    payments = Payment.objects.all()
-    payment_categories = PaymentCategory.objects.all()
+    user_pools = Pool.objects.filter(membership__user_id=request.user.id)
+
+    if user_pools.count() == 1:
+        return redirect('pool-index', pool_id=user_pools.first().id)
+
+    return render(request, 'core/pool_list.html', {'pools': user_pools})
+
+
+# Pool Views
+
+@login_required
+def pool_index(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    users = pool.members.all().order_by('username')
+    payments = Payment.objects.filter(pool=pool)
+    payment_categories = PaymentCategory.objects.filter(pool=pool)
     sorted_category_names = sorted([c.name for c in payment_categories])
     payment_amounts = [float(p.amount) for p in payments]
 
@@ -72,6 +90,7 @@ def index(request):
     payment_bins = np.linspace(0, 200, 21, True).astype(np.float64)
     payment_counts = np.histogram(payment_amounts, bins=payment_bins)[0].tolist()
 
+    # noinspection PyTypeChecker
     payment_hist = [[payment_bins[i], payment_counts[i]] for i in range(0, len(payment_counts))]
 
     mean_paid = Decimal(0)
@@ -100,7 +119,8 @@ def index(request):
 
     deviations = sorted(deviations, key=lambda d: d[0])
 
-    return render(request, 'core/index.html', {
+    return render(request, 'core/pool.html', {
+        'pool': pool,
         'deviations': deviations,
         'contribution_mean': str(mean_paid.quantize(Decimal('0.01'))),
         'payment_mean': str(mean_payment.quantize(Decimal('0.01'))),
@@ -114,82 +134,200 @@ def index(request):
     })
 
 
+@login_required
+def pool_create(request):
+    if request.method == 'POST':
+        pf = PoolForm(request.POST)
+        if pf.is_valid():
+            pool = pf.save()
+            Membership.objects.create(pool=pool, user=request.user, owner=True).save()
+            return redirect('index')
+    else:
+        pf = PoolForm()
+
+    return render(request, 'core/pool_create.html', {'form': pf})
+
+
 # Payment Views
 
 @login_required
-def payment_list(request):
-    payments = Payment.objects.order_by('-date_made')
-    return render(request, 'core/payment_list.html', {'payments': payments})
+def payment_list(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    payments = Payment.objects.filter(pool=pool).order_by('-date_made')
+    return render(request, 'core/payment_list.html', {'pool': pool, 'payments': payments})
 
 
 @login_required
-def payment_detail(request, payment_id):
-    payment = get_object_or_404(Payment, pk=payment_id)
-    return render(request, 'core/payment_detail.html', {'payment': payment})
+def payment_detail(request, pool_id, payment_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    payment = get_object_or_404(Payment, pk=payment_id, pool=pool)
+    return render(request, 'core/payment_detail.html', {'pool': pool, 'payment': payment})
 
 
 @login_required
-def payment_add(request):
+def payment_add(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
     if request.method == 'POST':
-        pf = PaymentForm(request.POST)
+        pf = PaymentForm(pool, request.POST)
         if pf.is_valid():
-            pf.save()
-            return redirect('payment-list')
+            payment = pf.save(commit=False)
+            payment.pool = pool
+            payment.save()
+            return redirect('payment-list', pool_id)
 
     else:
-        pf = PaymentForm(initial={
+        pf = PaymentForm(pool, initial={
             'date_made': datetime.now().strftime('%Y-%m-%d'),
             'payer': request.user
         })
 
-    return render(request, 'core/payment_add.html', {'form': pf})
+    return render(request, 'core/payment_add.html', {'pool': pool, 'form': pf})
 
 
 @login_required
-def payment_edit(request, payment_id):
+def payment_edit(request, pool_id, payment_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
     payment = get_object_or_404(Payment, pk=payment_id)
+
+    if payment.pool_id != pool.id:
+        raise Payment.DoesNotExist
 
     if not payment.recent or payment.payer.id != request.user.id:
         raise PermissionDenied
 
     if request.method == 'POST':
-        pf = PaymentEditForm(request.POST, instance=payment)
+        pf = PaymentEditForm(pool, request.POST, instance=payment)
         if pf.is_valid():
             pf.save()
-            return redirect('payment-list')
+            return redirect('payment-list', pool_id)
     else:
-        pf = PaymentEditForm(instance=payment)
+        pf = PaymentEditForm(pool, instance=payment)
 
-    return render(request, 'core/payment_edit.html', {'form': pf, 'payment': payment})
+    return render(request, 'core/payment_edit.html', {'pool': pool, 'form': pf, 'payment': payment})
 
 
 # Payment Category Views
 
-def payment_category_list(request):
-    payment_categories = PaymentCategory.objects.order_by('name')
-    return render(request, 'core/payment_category_list.html', {'payment_categories': payment_categories})
+def payment_category_list(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    payment_categories = PaymentCategory.objects.filter(pool=pool).order_by('name')
+    return render(request, 'core/payment_category_list.html', {'pool': pool, 'payment_categories': payment_categories})
 
 
-def payment_category_detail(request, category_id):
+def payment_category_detail(request, pool_id, category_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
     category = get_object_or_404(PaymentCategory, pk=category_id)
-    return render(request, 'core/payment_category_detail.html', {'category': category})
+
+    if category.pool_id != pool.id:
+        raise PaymentCategory.DoesNotExist
+
+    return render(request, 'core/payment_category_detail.html', {'pool': pool, 'category': category})
 
 
 @login_required
-def payment_category_add(request):
+def payment_category_add(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
     if request.method == 'POST':
         pcf = PaymentCategoryForm(request.POST)
         if pcf.is_valid():
-            pcf.save()
-            return redirect('payment-category-list')
+            pc = pcf.save(commit=False)
+            pc.pool = pool
+            pc.save()
+            return redirect('payment-category-list', pool_id)
     else:
         pcf = PaymentCategoryForm()
-    return render(request, 'core/payment_category_add.html', {'form': pcf})
+
+    return render(request, 'core/payment_category_add.html', {'pool': pool, 'form': pcf})
+
+
+# Member Views
+
+@login_required
+def member_list(request, pool_id):
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    members = pool.members.all().order_by('username')
+
+    return render(request, 'core/member_list.html', {'pool': pool, 'members': members})
+
+
+@login_required
+def member_add(request, pool_id):
+    errors = []
+
+    pool = get_object_or_404(Pool, pk=pool_id)
+
+    if request.user not in pool.members.all():
+        raise PermissionDenied
+
+    # TODO: More Error Handling
+
+    if request.method == 'POST':
+        mf = MemberForm(request.POST)
+        if mf.is_valid():
+            username = mf.cleaned_data['username']
+            # TODO: Make this a validator instead
+            try:
+                member = User.objects.get(username=username)
+                Membership.objects.create(user=member, pool=pool, owner=False)
+                return redirect('member-list', pool.id)
+            except User.DoesNotExist:
+                errors.append({
+                    'name': 'User Does Not Exist',
+                    'details': 'The user with the provided username does not exist.'
+                })
+        else:
+            errors.append({
+                'name': 'Missing Field(s)',
+                'details': 'Please fill out all required fields.'
+            })
+    else:
+        mf = MemberForm()
+
+    return render(request, 'core/member_add.html', {'pool': pool, 'form': mf, 'errors': errors})
 
 
 # Authentication Views
 
 def sign_in(request):
+    # TODO: More Errors
+
+    if request.user.is_authenticated():
+        return redirect('index')
+
+    errors = []
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -197,9 +335,43 @@ def sign_in(request):
         if user is not None:
             login(request, user)
             return redirect('index')
-    return render(request, 'core/sign_in.html')
+        else:
+            errors.append({
+                'name': 'Wrong Username or Password',
+                'details': 'Please try again with correct credentials.'
+            })
+
+    return render(request, 'core/sign_in.html', {'errors': errors})
 
 
+@login_required()
 def sign_out(request):
     logout(request)
     return redirect('index')
+
+
+def register(request):
+    # TODO: More Errors
+
+    if request.user.is_authenticated():
+        return redirect('index')
+
+    errors = []
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        password2 = request.POST['password2']
+        if password == password2:
+            try:
+                user = User.objects.create_user(username, email, password)
+                login(request, user)
+                return redirect('index')
+            except IntegrityError:
+                errors.append({
+                    'name': 'Username Error',
+                    'details': 'A user with that username already exists.'
+                })
+
+    return render(request, 'core/register.html', {'errors': errors})

@@ -2,44 +2,57 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Spending Balancer</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i,800,800i" rel="stylesheet">
-        <link rel="stylesheet" href="{% static "core/style.css" %}">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta charset="utf-8">
+<head>
+    <title>Spending Balancer</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i,800,800i" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "core/style.css" %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/histogram-bellcurve.js"></script>
 
-        {% block scripts %}
+    {% block scripts %}
+    {% endblock %}
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'index' %}">Spending Balancer</a></h1>
+        <nav>
+            <ul>
+                {% if user.is_authenticated and pool %}
+                    <li><a href="{% url 'pool-index' pool.id %}">Dashboard</a></li>
+                    <li><a href="{% url 'payment-list' pool.id %}">Payments</a></li>
+                    <li><a href="{% url 'payment-category-list' pool.id %}">Categories</a></li>
+                    <li><a href="{% url 'member-list' pool.id %}">Members</a></li>
+                    <li class="highlight"><a href="{% url 'payment-add' pool.id %}">Add Payment</a></li>
+                    <li><a href="{% url 'sign-out' %}">Sign Out</a></li>
+                {% elif user.is_authenticated %}
+                    <li><a href="{% url 'index' %}">Pools</a></li>
+                    <li class="highlight"><a href="{% url 'pool-create' %}">Create Pool</a></li>
+                    <li><a href="{% url 'sign-out' %}">Sign Out</a></li>
+                {% else %}
+                    <li><a href="{% url 'sign-in' %}">Sign In</a></li>
+                    <li class="highlight"><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% if errors %}
+            <ul class="errors">
+            {% for error in errors %}
+                <li><div class="error-name">{{ error.name }}:</div>{{ error.details }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}
         {% endblock %}
-    </head>
-    <body>
-        <header>
-            <h1><a href="{% url 'index' %}">Spending Balancer</a></h1>
-            <nav>
-                <ul>
-                    {% if user.is_authenticated %}
-                        <li><a href="{% url 'index' %}">Dashboard</a></li>
-                        <li><a href="{% url 'payment-list' %}">Payments</a></li>
-                        <li><a href="{% url 'payment-category-list' %}">Categories</a></li>
-                        <li class="highlight"><a href="{% url 'payment-add' %}">Add Payment</a></li>
-                        <li><a href="{% url 'sign-out' %}">Sign Out</a></li>
-                    {% else %}
-                        <li><a href="{% url 'sign-in' %}">Sign In</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </header>
-        <main>
-            {% block content %}
-            {% endblock %}
-        </main>
-        <footer>
-            &copy; David Lougheed 2016-2018.
-        </footer>
-    </body>
+    </main>
+    <footer>
+        &copy; David Lougheed 2016-2018.
+    </footer>
+</body>
 </html>

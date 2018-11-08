@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Create Pool</h2>
+    <form action="{% url 'pool-create' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Create</button>
+    </form>
+{% endblock %}

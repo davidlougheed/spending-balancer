@@ -2,7 +2,7 @@
 
 {% block content %}
     <h2>Add Category</h2>
-    <form action="{% url 'payment-category-add' %}" method="post">
+    <form action="{% url 'payment-category-add' pool.id %}" method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Submit</button>

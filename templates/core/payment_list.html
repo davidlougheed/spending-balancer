@@ -6,14 +6,14 @@
         <ul class="payments fancy-list">
         {% for payment in payments %}
                 <li>
-                    <a href="{% url 'payment-detail' payment.id %}">
+                    <a href="{% url 'payment-detail' pool.id payment.id %}">
                         <div class="date">{{ payment.date_made }}</div>
                         ${{ payment.amount }}&nbsp;in&nbsp;{{ payment.category.name }}
                         by&nbsp;<strong>{{ payment.payer }}</strong>.
                     </a>
                     <div class="controls">
                         {% if payment.payer.username == user.get_username and payment.recent %}
-                            <a href="{% url 'payment-edit' payment.id %}">Edit</a>
+                            <a href="{% url 'payment-edit' pool.id payment.id %}">Edit</a>
                         {% endif %}
                     </div>
                 </li>

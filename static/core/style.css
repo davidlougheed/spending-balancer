@@ -78,6 +78,12 @@ main p:last-child {
     margin-bottom: 0;
 }
 
+main a#pool-create {
+    font-weight: 900;
+    color: #f44336;
+    text-decoration: none;
+}
+
 table {
     border: 2px solid #F3F3F3;
 }
@@ -95,6 +101,24 @@ table tr td i.material-icons {
     font-size: 1rem;
     margin-top: 1px;
     vertical-align: text-top;
+}
+
+
+ul.errors {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul.errors li {
+    color: #3f3f3f;
+}
+
+ul.errors li div.error-name {
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-weight: 900;
+    color: #f44336;
 }
 
 
@@ -202,7 +226,7 @@ button, input[type="submit"] {
     outline: none;
 }
 
-@media screen and (max-width: 880px) {
+@media screen and (max-width: 920px) {
     header { height: auto; }
     header h1 { float: none; }
     header nav { float: none; margin-right: 0; }
@@ -211,7 +235,7 @@ button, input[type="submit"] {
     header nav ul li a { margin-top: 3px; }
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 760px) {
     .row .col {
         display: block;
         width: 100% !important;
@@ -228,7 +252,7 @@ button, input[type="submit"] {
     }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 640px) {
     header nav ul {
         margin-bottom: 20px;
     }
