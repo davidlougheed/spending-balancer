@@ -94,8 +94,8 @@ def index(request):
         deviations.append((user.username, {
             'amount': str(deviation),
             'signal': 'negative' if deviation < 0 else 'positive',
-            'top': (len(top_paid) == 1 and top_paid[0] == user.id),
-            'bottom': (len(bottom_paid) == 1 and bottom_paid[0] == user.id)
+            'top': (len(top_paid) == 1 and top_paid[0] == user.id and bottom_paid[0] != user.id),
+            'bottom': (len(bottom_paid) == 1 and bottom_paid[0] == user.id and top_paid[0] != user.id)
         }))
 
     deviations = sorted(deviations, key=lambda d: d[0])
