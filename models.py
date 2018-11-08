@@ -9,7 +9,7 @@ class Pool(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=100)
-    slug = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
 
     members = models.ManyToManyField(User, through='Membership')
 
