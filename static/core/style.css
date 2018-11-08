@@ -219,6 +219,13 @@ button, input[type="submit"] {
     }
     .row .col:first-child { margin-top: 0; }
     .row .col:last-child { margin-bottom: 0; }
+
+    ul.payments li div.controls,
+    ul.categories li div.controls {
+        float: none;
+        margin-top: 3px;
+        font-size: 0.9rem;
+    }
 }
 
 @media screen and (max-width: 550px) {
