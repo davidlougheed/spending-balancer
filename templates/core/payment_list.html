@@ -7,7 +7,9 @@
         {% for payment in payments %}
                 <li>
                     <a href="{% url 'payment-detail' payment.id %}">
-                        <div class="date">{{ payment.date_made }}</div> ${{ payment.amount }} by {{ payment.payer }}.
+                        <div class="date">{{ payment.date_made }}</div>
+                        ${{ payment.amount }}&nbsp;in&nbsp;{{ payment.category.name }}
+                        by&nbsp;<strong>{{ payment.payer }}</strong>.
                     </a>
                 </li>
         {% endfor %}
