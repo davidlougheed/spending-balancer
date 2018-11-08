@@ -106,8 +106,7 @@ def index(request):
         'payments_by_category_by_user': payments_by_category_by_user,
         'payment_hist': json.dumps(payment_hist),
         'total': str(total_paid.quantize(Decimal('0.01'))),
-        'number': payments.count(),
-        'signed_in': request.user.is_authenticated
+        'number': payments.count()
     })
 
 
@@ -116,19 +115,13 @@ def index(request):
 @login_required
 def payment_list(request):
     payments = Payment.objects.order_by('-date_made')
-    return render(request, 'core/payment_list.html', {
-        'payments': payments,
-        'signed_in': request.user.is_authenticated
-    })
+    return render(request, 'core/payment_list.html', {'payments': payments})
 
 
 @login_required
 def payment_detail(request, payment_id):
     payment = get_object_or_404(Payment, pk=payment_id)
-    return render(request, 'core/payment_detail.html', {
-        'payment': payment,
-        'signed_in': request.user.is_authenticated
-    })
+    return render(request, 'core/payment_detail.html', {'payment': payment})
 
 
 @login_required
@@ -138,30 +131,26 @@ def payment_add(request):
         if pf.is_valid():
             pf.save()
             return redirect('payment-list')
+
     else:
         pf = PaymentForm(initial={
             'date_made': datetime.now().strftime('%Y-%m-%d'),
             'payer': request.user
         })
-    return render(request, 'core/payment_add.html', {'form': pf, 'signed_in': request.user.is_authenticated})
+
+    return render(request, 'core/payment_add.html', {'form': pf})
 
 
 # Payment Category Views
 
 def payment_category_list(request):
     payment_categories = PaymentCategory.objects.order_by('name')
-    return render(request, 'core/payment_category_list.html', {
-        'payment_categories': payment_categories,
-        'signed_in': request.user.is_authenticated
-    })
+    return render(request, 'core/payment_category_list.html', {'payment_categories': payment_categories})
 
 
 def payment_category_detail(request, category_id):
     category = get_object_or_404(PaymentCategory, pk=category_id)
-    return render(request, 'core/payment_category_detail.html', {
-        'category': category,
-        'signed_in': request.user.is_authenticated
-    })
+    return render(request, 'core/payment_category_detail.html', {'category': category})
 
 
 @login_required
@@ -169,11 +158,11 @@ def payment_category_add(request):
     if request.method == 'POST':
         pcf = PaymentCategoryForm(request.POST)
         if pcf.is_valid():
-            new_category = pcf.save()
+            pcf.save()
             return redirect('payment-category-list')
     else:
         pcf = PaymentCategoryForm()
-    return render(request, 'core/payment_category_add.html', {'form': pcf, 'signed_in': request.user.is_authenticated})
+    return render(request, 'core/payment_category_add.html', {'form': pcf})
 
 
 # Authentication Views
@@ -186,7 +175,7 @@ def sign_in(request):
         if user is not None:
             login(request, user)
             return redirect('index')
-    return render(request, 'core/sign_in.html', {'signed_in': request.user.is_authenticated})
+    return render(request, 'core/sign_in.html')
 
 
 def sign_out(request):
