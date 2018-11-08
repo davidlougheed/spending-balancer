@@ -10,7 +10,19 @@ from .forms import PaymentForm, PaymentCategoryForm
 
 import json
 import numpy as np
-from datetime import datetime
+from collections import OrderedDict
+from datetime import datetime, timedelta, date
+
+
+def get_months(earliest_time):
+    months = set()
+    dt = earliest_time
+
+    while dt <= date.today():
+        months.add(dt.strftime('%Y-%m'))
+        dt += timedelta(days=1)
+
+    return sorted(list(months))
 
 
 @login_required
@@ -18,29 +30,29 @@ def index(request):
     users = User.objects.order_by('username')
     payments = Payment.objects.all()
     payment_categories = PaymentCategory.objects.all()
+    sorted_category_names = sorted([c.name for c in payment_categories])
     payment_amounts = [float(p.amount) for p in payments]
 
     total_paid = Decimal('0.00')
     users_paid = {user.id: Decimal('0.00') for user in users}
 
-    payments_by_category = {
-        category.name: {
-            'name': category.name,
-            'y': 0.0
-        } for category in payment_categories
-    }
-    payments_by_category_by_user = {
-        user.username: {
-            category.name: {
-                'name': category.name,
-                'y': 0.0
-            } for category in payment_categories
-        } for user in users
-    }
+    earliest_time = min([p.date_made for p in payments])
+    payment_months = get_months(earliest_time)
+
+    spending_history = OrderedDict([(cn, {'name': cn, 'data': [0] * len(payment_months)})
+                                    for cn in sorted_category_names])
+    payments_by_category = OrderedDict([(cn, {'name': cn, 'y': 0.0}) for cn in sorted_category_names])
+    payments_by_category_by_user = OrderedDict(sorted([
+        (user.username, OrderedDict([(cn, {'name': cn, 'y': 0.0}) for cn in sorted_category_names]))
+        for user in users
+    ], key=lambda u: u[0]))
 
     for payment in payments:
         total_paid += payment.amount
         users_paid[payment.payer.id] += payment.amount
+
+        pmi = payment_months.index(payment.date_made.strftime('%Y-%m'))
+        spending_history[payment.category.name]['data'][pmi] += float(payment.amount)
 
         payments_by_category_by_user[payment.payer.username][payment.category.name]['y'] += float(payment.amount)
         payments_by_category[payment.category.name]['y'] += float(payment.amount)
@@ -77,10 +89,14 @@ def index(request):
             'bottom': (len(bottom_paid) == 1 and bottom_paid[0] == user.id)
         }))
 
+    deviations = sorted(deviations, key=lambda d: d[0])
+
     return render(request, 'core/index.html', {
         'deviations': deviations,
         'contribution_mean': str(mean_paid.quantize(Decimal('0.01'))),
         'payment_mean': str(mean_payment.quantize(Decimal('0.01'))),
+        'spending_history_categories': json.dumps(payment_months),
+        'spending_history': json.dumps(list(spending_history.values())),
         'payments_by_category': json.dumps(list(payments_by_category.values())),
         'payments_by_category_by_user': payments_by_category_by_user,
         'payment_hist': json.dumps(payment_hist),

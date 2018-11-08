@@ -129,6 +129,9 @@ span.negative {
 .row .col.col50 {
     width: 50%;
 }
+.row .col.col100 {
+    width: 100%;
+}
 
 footer {
     padding: 30px;

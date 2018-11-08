@@ -8,6 +8,23 @@
             };
             Highcharts.setOptions(Highcharts.theme);
 
+            Highcharts.chart('spending-history', {
+                chart: { type: 'column' },
+                title: { text: 'Spending History' },
+
+                xAxis: {
+                    categories: {{ spending_history_categories|safe }},
+                    title: { text: 'Month' }
+                },
+
+                yAxis: {
+                    min: 0,
+                    title: { text: 'Amount ($)' }
+                },
+
+                series: {{ spending_history|safe }}
+            });
+
             Highcharts.chart('payment-by-category', {
                 chart: {
                     plotBackgroundColor: null,
@@ -117,6 +134,12 @@
         </table>
     </div>
 
+    <h2>Spending History</h2>
+    <div class="row">
+        <div class="col col100"><div id="spending-history"></div></div>
+    </div>
+
+    <h2>Payment Breakdown</h2>
     <div class="row">
         <div class="col col50"><div id="payment-by-category"></div></div>
         <div class="col col50"><div id="payment-amount-hist"></div></div>
