@@ -32,7 +32,8 @@ class PaymentForm(ModelForm):
 class PaymentEditForm(ModelForm):
     class Meta:
         model = Payment
-        fields = ['amount', 'category']
+        fields = ['date_made', 'amount', 'category']
+        widgets = {'date_made': DateInput(attrs={'placeholder': 'YYYY-MM-DD'})}
 
     def __init__(self, *args, **kwargs):
         super(PaymentEditForm, self).__init__(*args, **kwargs)
