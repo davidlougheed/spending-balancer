@@ -180,7 +180,10 @@ form button {
     margin-top: 20px;
 }
 
-form input[type="text"], form input[type="password"], form input[type="number"] {
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"] {
     border: 2px solid #2f2f2f;
     padding: 7px;
     font-size: 0.9rem;
