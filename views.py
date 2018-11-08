@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 
 from decimal import *
 
-from .models import Payment, PaymentCategory
+from .models import *
 from .forms import *
 
 import json
