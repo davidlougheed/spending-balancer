@@ -16,6 +16,9 @@ from datetime import datetime, timedelta, date
 
 
 def get_months(earliest_time):
+    if earliest_time is None:
+        return []
+
     months = set()
     dt = earliest_time
 
@@ -37,7 +40,7 @@ def index(request):
     total_paid = Decimal('0.00')
     users_paid = {user.id: Decimal('0.00') for user in users}
 
-    earliest_time = min([p.date_made for p in payments])
+    earliest_time = min([p.date_made for p in payments]) if payments.count() > 0 else None
     payment_months = get_months(earliest_time)
 
     spending_history = OrderedDict([(cn, {'name': cn, 'data': [0] * len(payment_months)})
