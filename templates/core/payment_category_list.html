@@ -3,7 +3,7 @@
 {% block content %}
     <h2>Payment Categories <a href="{% url 'payment-category-add' %}">Add Category</a></h2>
     {% if payment_categories %}
-        <ul class="categories">
+        <ul class="categories fancy-list">
         {% for category in payment_categories %}
                 <li>
                     <a href="{% url 'payment-category-detail' category.id %}">
