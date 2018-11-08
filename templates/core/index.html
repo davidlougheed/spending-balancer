@@ -21,7 +21,10 @@
 
                 yAxis: {
                     min: 0,
-                    title: { text: 'Amount ($)' }
+                    title: { text: 'Amount ($)' },
+                    stackLabels: {
+                        enabled: true
+                    }
                 },
 
                 series: {{ spending_history|safe }}
