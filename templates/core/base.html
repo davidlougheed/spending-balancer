@@ -22,7 +22,7 @@
             <h1><a href="{% url 'index' %}">Spending Balancer</a></h1>
             <nav>
                 <ul>
-                    {% if signed_in %}
+                    {% if user.is_authenticated %}
                         <li><a href="{% url 'index' %}">Dashboard</a></li>
                         <li><a href="{% url 'payment-list' %}">Payments</a></li>
                         <li><a href="{% url 'payment-category-list' %}">Categories</a></li>
