@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^payments/$', views.payment_list, name='payment-list'),
     url(r'^payments/add/$', views.payment_add, name='payment-add'),
     url(r'^payments/(?P<payment_id>[0-9]+)/$', views.payment_detail, name='payment-detail'),
+    url(r'^payments/(?P<payment_id>[0-9]+)/edit/$', views.payment_edit, name='payment-edit'),
 
     url(r'^categories/$', views.payment_category_list, name='payment-category-list'),
     url(r'^categories/add/$', views.payment_category_add, name='payment-category-add'),

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from datetime import date
+
 
 class PaymentCategory(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -23,6 +25,10 @@ class Payment(models.Model):
 
     payer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(PaymentCategory, on_delete=models.SET_NULL, null=True)
+
+    @property
+    def recent(self):
+        return (date.today() - self.date_made).days < 8
 
     def __str__(self):
         return '$' + str(self.amount) + ' made ' + str(self.date_made) + ' by ' + str(self.payer) + '.'

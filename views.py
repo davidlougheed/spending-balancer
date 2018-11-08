@@ -2,11 +2,12 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 from decimal import *
 
 from .models import Payment, PaymentCategory
-from .forms import PaymentForm, PaymentCategoryForm
+from .forms import *
 
 import json
 import numpy as np
@@ -139,6 +140,24 @@ def payment_add(request):
         })
 
     return render(request, 'core/payment_add.html', {'form': pf})
+
+
+@login_required
+def payment_edit(request, payment_id):
+    payment = get_object_or_404(Payment, pk=payment_id)
+
+    if not payment.recent or payment.payer.id != request.user.id:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        pf = PaymentEditForm(request.POST, instance=payment)
+        if pf.is_valid():
+            pf.save()
+            return redirect('payment-list')
+    else:
+        pf = PaymentEditForm(instance=payment)
+
+    return render(request, 'core/payment_edit.html', {'form': pf, 'payment': payment})
 
 
 # Payment Category Views

@@ -27,3 +27,12 @@ class PaymentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PaymentForm, self).__init__(*args, **kwargs)
         self.fields['receipt'].required = False
+
+
+class PaymentEditForm(ModelForm):
+    class Meta:
+        model = Payment
+        fields = ['amount', 'category']
+
+    def __init__(self, *args, **kwargs):
+        super(PaymentEditForm, self).__init__(*args, **kwargs)

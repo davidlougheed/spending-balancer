@@ -11,6 +11,11 @@
                         ${{ payment.amount }}&nbsp;in&nbsp;{{ payment.category.name }}
                         by&nbsp;<strong>{{ payment.payer }}</strong>.
                     </a>
+                    <div class="controls">
+                        {% if payment.payer.username == user.get_username and payment.recent %}
+                            <a href="{% url 'payment-edit' payment.id %}">Edit</a>
+                        {% endif %}
+                    </div>
                 </li>
         {% endfor %}
         </ul>

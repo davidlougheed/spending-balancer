@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>Edit Payment</h2>
+    <form action="{% url 'payment-edit' payment.id %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Save Changes</button>
+    </form>
+{% endblock %}
