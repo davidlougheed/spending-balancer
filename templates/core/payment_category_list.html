@@ -1,8 +1,7 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <h2>Payment Categories</h2>
-    <a href="{% url 'payment-category-add' %}">Add Category</a>
+    <h2>Payment Categories <a href="{% url 'payment-category-add' %}">Add Category</a></h2>
     {% if payment_categories %}
         <ul class="categories">
         {% for category in payment_categories %}

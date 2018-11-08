@@ -66,6 +66,14 @@ main h2 {
 main h2:first-child {
     margin-top: 0;
 }
+main h2 a {
+    float: right;
+    color: #f44336;
+    font-size: 1rem;
+    font-style: normal;
+    text-decoration: none;
+}
+
 main p:last-child {
     margin-bottom: 0;
 }
