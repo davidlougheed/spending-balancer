@@ -323,7 +323,7 @@ def member_add(request, pool_id):
 def sign_in(request):
     # TODO: More Errors
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('index')
 
     errors = []

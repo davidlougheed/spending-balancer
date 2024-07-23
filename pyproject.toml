@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "spending_balancer"
+version = "1.0.0"
+description = "A basic web application for balancing spending between multiple people over long durations."
+authors = ["David Lougheed <david.lougheed@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^5.0.7"
+numpy = "^2.0.1"
+pillow = "^10.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
