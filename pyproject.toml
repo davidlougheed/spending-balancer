@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spending_balancer"
-version = "1.0.0"
+version = "1.0.1"
 description = "A basic web application for balancing spending between multiple people over long durations."
 authors = ["David Lougheed <david.lougheed@gmail.com>"]
 readme = "README.md"

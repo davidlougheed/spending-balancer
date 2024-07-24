@@ -12,6 +12,7 @@ class EnvSettings(BaseSettings):
     secret_key: str = "django-insecure-i5kxw-#a#p=q02_l@-@#dedjrvsmql_q2+-8-n*d+3t3$y8u8g"
     debug: bool = False
     allowed_hosts: list[str] = []
+    csrf_trusted_origins: list[str] = []
 
     db_path: Path = BASE_DIR / "db.sqlite3"
     static_root: Path = BASE_DIR / "static"
@@ -34,6 +35,8 @@ SECRET_KEY = env_settings.secret_key
 DEBUG = env_settings.debug
 
 ALLOWED_HOSTS = env_settings.allowed_hosts
+
+CSRF_TRUSTED_ORIGINS = env_settings.csrf_trusted_origins
 
 
 # Application definition

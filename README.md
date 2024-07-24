@@ -9,7 +9,8 @@ This is an old project mostly developed from 2016-2018 for balancing roommate ex
 
 ```bash
 SB_SECRET_KEY=my-secret-key-here
-SB_ALLOWED_HOSTS='["my-domain.local"]'
+SB_ALLOWED_HOSTS='["example.org"]'
+SB_CSRF_TRUSTED_ORIGINS='["https://example.org"]'
 ```
 
 ## Bind Mounts
