@@ -3,6 +3,8 @@
 Spending Balancer is a tool for managing spending between a group of people. For example, roommates could use the tool
 to keep track of shared purchases and balance the amount of money spent.
 
+This is an old project mostly developed from 2016-2018 for balancing roommate expenses.
+
 ## Environment Variables
 
 ```bash
